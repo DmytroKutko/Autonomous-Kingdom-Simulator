@@ -53,22 +53,32 @@ body {
   display: block;
 }
 
-#debug-panel .stat {
+#debug-panel .row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  width: 100%;
   font-size: 11px;
   margin: 4px 0;
-  width: 100%;
 }
 
-#debug-panel .stat-label {
+#debug-panel .row .label {
   color: #888;
   white-space: nowrap;
 }
 
-#debug-panel .stat-value {
+#debug-panel .row .value {
   color: #fff;
   white-space: nowrap;
+  text-align: right;
+  margin-left: auto;
+}
+
+#base-resources,
+#selected-unit {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #debug-panel .unit-item {

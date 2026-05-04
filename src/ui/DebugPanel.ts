@@ -26,16 +26,16 @@ export class DebugPanel {
     const base = this.game.world.base;
     let html = '<h3>Base</h3>';
     html += `
-      <div class="stat">
-        <span class="stat-label">Wood:</span>
-        <span class="stat-value">${base.getResource('wood')}</span>
+      <div class="row">
+        <span class="label">Wood:</span>
+        <span class="value">${base.getResource('wood')}</span>
       </div>
     `;
     if (base.getResource('food') > 0) {
       html += `
-        <div class="stat">
-          <span class="stat-label">Food:</span>
-          <span class="stat-value">${base.getResource('food')}</span>
+        <div class="row">
+          <span class="label">Food:</span>
+          <span class="value">${base.getResource('food')}</span>
         </div>
       `;
     }
@@ -78,7 +78,7 @@ export class DebugPanel {
 
     let inventoryHtml = '';
     const currentCount = unit.currentResources;
-    inventoryHtml += `<div style="font-size: 10px; color: #888; margin-bottom: 4px;">Inventory: ${currentCount}/${unit.inventoryCapacity}</div>`;
+    inventoryHtml += `<div class="row"><span class="label">Inventory:</span><span class="value">${currentCount}/${unit.inventoryCapacity}</span></div>`;
     
     if (currentCount > 0) {
       unit.inventory.forEach((amount, type) => {
@@ -92,25 +92,25 @@ export class DebugPanel {
 
     this.selectedUnit.innerHTML = `
       <h3>${this.getUnitDisplayName(unit)}</h3>
-      <div class="stat">
-        <span class="stat-label">HP:</span>
-        <span class="stat-value">${unit.health}/${unit.maxHealth}</span>
+      <div class="row">
+        <span class="label">HP:</span>
+        <span class="value">${unit.health}/${unit.maxHealth}</span>
       </div>
       <div class="hp-bar-container">
         <div class="hp-bar ${hpClass}" style="width: ${hpPercent}%"></div>
       </div>
-      <div class="stat">
-        <span class="stat-label">Attack:</span>
-        <span class="stat-value">${unit.damage}</span>
+      <div class="row">
+        <span class="label">Attack:</span>
+        <span class="value">${unit.damage}</span>
       </div>
-      <div class="stat">
-        <span class="stat-label">Task:</span>
-        <span class="stat-value">${unit.task}</span>
+      <div class="row">
+        <span class="label">Task:</span>
+        <span class="value">${unit.task}</span>
       </div>
       ${inventoryHtml}
-      <div class="stat">
-        <span class="stat-label">Position:</span>
-        <span class="stat-value">${Math.floor(unit.position.x)}, ${Math.floor(unit.position.y)}</span>
+      <div class="row">
+        <span class="label">Position:</span>
+        <span class="value">${Math.floor(unit.position.x)}, ${Math.floor(unit.position.y)}</span>
       </div>
     `;
   }
