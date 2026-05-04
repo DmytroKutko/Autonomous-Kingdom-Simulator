@@ -124,12 +124,17 @@ export class Game {
   }
 
   hireWarrior(): boolean {
-    if (this.world.base.spendResources(1, 1)) {
+    if (this.world.base.spendResources(3, 1)) {
       const config = unitConfigs.warrior;
+      const basePos = this.world.base.position;
+      const offset = {
+        x: (Math.random() - 0.5) * 80,
+        y: (Math.random() - 0.5) * 80
+      };
       const warrior = new Unit(
         { 
-          x: this.world.base.position.x + (Math.random() - 0.5) * 40, 
-          y: this.world.base.position.y + (Math.random() - 0.5) * 40 
+          x: basePos.x + 30 + offset.x, 
+          y: basePos.y + 30 + offset.y 
         },
         config.health,
         config.speed,

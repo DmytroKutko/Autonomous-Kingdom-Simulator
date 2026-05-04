@@ -37,7 +37,10 @@ export class BottomPanel {
 
   private setupRecruitButton(): void {
     this.recruitBtn.addEventListener('click', () => {
-      // NO recruit logic yet - UI state only
+      const recruited = this.game.hireWarrior();
+      if (recruited) {
+        this.updateButtonState();
+      }
     });
   }
 
