@@ -7,6 +7,7 @@ export class DebugPanel {
   baseResources: HTMLElement;
   unitList: HTMLElement;
   selectedUnit: HTMLElement;
+  selectedUnitId: number | null = null;
 
   constructor(game: Game) {
     this.game = game;
@@ -14,6 +15,20 @@ export class DebugPanel {
     this.baseResources = document.getElementById('base-resources')!;
     this.unitList = document.getElementById('unit-list')!;
     this.selectedUnit = document.getElementById('selected-unit')!;
+    this.setupUnitListClickHandler();
+  }
+
+  private setupUnitListClickHandler(): void {
+    this.unitList.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const unitItem = target.closest('.unit-item') as HTMLElement;
+      if (unitItem && unitItem.parentElement === this.unitList) {
+        const unitId = parseInt(unitItem.getAttribute('data-unit-id')!, 10);
+        if (!isNaN(unitId)) {
+          this.selectedUnitId = unitId;
+        }
+      }
+    });
   }
 
   update(): void {
@@ -46,13 +61,20 @@ export class DebugPanel {
     const units = this.game.world.units;
     if (units.length === 0) {
       this.unitList.innerHTML = '<p style="font-size: 11px; color: #666;">No units</p>';
+      this.selectedUnitId = null;
       return;
+    }
+
+    if (this.selectedUnitId === null || !units.find(u => u.id === this.selectedUnitId)) {
+      this.selectedUnitId = units[0].id;
     }
 
     let html = '';
     for (const unit of units) {
+      const isSelected = unit.id === this.selectedUnitId;
+      const selectedClass = isSelected ? 'selected' : '';
       html += `
-        <div class="unit-item">
+        <div class="unit-item ${selectedClass}" data-unit-id="${unit.id}">
           ${this.getUnitDisplayName(unit)}
         </div>
       `;
@@ -65,7 +87,7 @@ export class DebugPanel {
   }
 
   updateSelectedUnit(): void {
-    const unit = this.game.world.units[0];
+    const unit = this.game.world.units.find(u => u.id === this.selectedUnitId);
     if (!unit) {
       this.selectedUnit.innerHTML = '';
       return;
