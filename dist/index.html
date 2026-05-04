@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Kingdom Simulator</title>
+  <script type="module" crossorigin src="/assets/index-kDLwzidB.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-ClK9pg5P.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas"></canvas>
+    <aside id="debug-panel">
+      <h2>Kingdom Resources</h2>
+      <div id="base-resources"></div>
+      <div id="units-section">
+        <h3>Units</h3>
+        <div id="unit-list"></div>
+      </div>
+      <div id="selected-unit"></div>
+    </aside>
+    <div id="bottom-panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="units">Units</button>
+        <button class="tab" data-tab="controls">Управління</button>
+      </div>
+      <div class="tab-content">
+        <div id="units-tab" class="tab-pane active">
+          <div class="unit-cards">
+            <div class="unit-card">
+              <div class="unit-info">
+                <div class="unit-name">Warrior</div>
+                <div class="unit-cost">3 wood + 1 food</div>
+              </div>
+              <button class="recruit-btn">Recruit</button>
+            </div>
+          </div>
+        </div>
+        <div id="controls-tab" class="tab-pane">
+          <div class="controls-info">
+            <div class="control-item">WASD / Arrows — move camera</div>
+            <div class="control-item">Mouse wheel — zoom</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
