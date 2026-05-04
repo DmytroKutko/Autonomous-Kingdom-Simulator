@@ -15,8 +15,7 @@ export interface BehaviorContext {
 const RAT_SAFE_ZONE = 5 * 20;
 const HEAL_THRESHOLD = 0.5;
 const SOFT_HEAL_THRESHOLD = 0.8;
-const HEAL_INTERVAL = 10;
-const HEAL_AMOUNT_PERCENT = 0.1;
+const HEAL_RATE = 1;
 
 const findNearestEnemy = (unit: Unit, enemies: Enemy[]): Enemy | null => {
   let nearest: Enemy | null = null;
@@ -66,8 +65,8 @@ const handleHealing = (unit: Unit, base: Base, dt: number): boolean => {
   unit.healingTimer += dt;
   unit.setTask('healing');
 
-  if (unit.healingTimer >= HEAL_INTERVAL) {
-    const healAmount = unit.maxHealth * HEAL_AMOUNT_PERCENT;
+  if (unit.healingTimer >= 1) {
+    const healAmount = HEAL_RATE * unit.healingTimer;
     unit.heal(healAmount);
     unit.healingTimer = 0;
   }

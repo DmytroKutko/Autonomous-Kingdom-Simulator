@@ -9,7 +9,7 @@ export const tryHeal = (unit: LivingEntity, base: Base, dt: number): boolean => 
     return false;
   }
   
-  unit.heal(0.5 * dt * 60);
+  unit.heal(1 * dt);
   return true;
 };
 

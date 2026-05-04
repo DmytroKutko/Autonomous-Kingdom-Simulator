@@ -75,7 +75,7 @@ export class Game {
       this.world.addResourceNode(node);
     }
 
-    const ratCount = 8;
+    const ratCount = 16;
     const ratConfig = enemyConfigs.rat;
     for (let i = 0; i < ratCount; i++) {
       let x: number, y: number, distToBase: number;
