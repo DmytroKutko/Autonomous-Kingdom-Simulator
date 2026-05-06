@@ -1,7 +1,7 @@
 import { Unit, Base, ResourceNode, Enemy, DroppedItem } from '../entities';
 import { World } from '../game/World';
 import { canReach, moveToward, distance } from './MovementLogic';
-import { findNearestResource, depositResources } from './GatheringLogic';
+import { findNearestUnclaimedResource, depositResources, claimResource, releaseResource } from './GatheringLogic';
 
 export interface BehaviorContext {
   unit: Unit;
@@ -91,6 +91,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
   unit.updateCooldowns(dt);
 
   if (shouldEmergencyRetreat(unit) && !unit.isHealingAtBase) {
+    if (unit.targetResource) {
+      releaseResource(unit);
+    }
     unit.isHealingAtBase = true;
     unit.setTask('returning');
     unit.targetEntity = base;
@@ -106,6 +109,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
     const enemy = unit.targetEntity;
     if (!enemy.isDead()) {
       if (unit.isInRange(enemy) || enemy.isInRange(unit)) {
+        if (unit.targetResource) {
+          releaseResource(unit);
+        }
         unit.setTask('fighting');
         unit.performAttack(enemy);
         if (enemy.isDead()) {
@@ -113,6 +119,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
         }
         return;
       } else if (unit.distanceTo(enemy) <= unit.visionRange) {
+        if (unit.targetResource) {
+          releaseResource(unit);
+        }
         unit.setTask('fighting');
         moveToward(unit, enemy.center, dt);
         return;
@@ -123,6 +132,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
 
   const enemy = findNearestEnemy(unit, ctx.enemies || []);
   if (enemy && (unit.isInRange(enemy) || enemy.isInRange(unit) || unit.distanceTo(enemy) <= unit.visionRange)) {
+    if (unit.targetResource) {
+      releaseResource(unit);
+    }
     unit.targetEntity = enemy;
     unit.setTask('fighting');
     if (unit.isInRange(enemy)) {
@@ -140,6 +152,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
   }
 
   if (unit.isInventoryFull()) {
+    if (unit.targetResource) {
+      releaseResource(unit);
+    }
     unit.setTask('returning');
     unit.targetEntity = base;
     if (canReach(unit, base.center, 50)) {
@@ -160,6 +175,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
 
   const droppedFood = findNearestDroppedFood(unit, droppedItems || []);
   if (droppedFood) {
+    if (unit.targetResource) {
+      releaseResource(unit);
+    }
     console.log('Found dropped food, distance:', unit.distanceTo(droppedFood));
     const dist = unit.distanceTo(droppedFood);
     if (dist <= unit.attackRange + 10) {
@@ -183,21 +201,33 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
     unit.gatherTimer -= dt;
     unit.setTask('gathering');
     if (unit.gatherTimer <= 0) {
-      const resource = findNearestResource(unit, resourceNodes);
-      if (resource && unit.distanceTo(resource) <= unit.attackRange + 10) {
-        const gathered = resource.gather(1);
+      if (unit.targetResource && !unit.targetResource.isDepleted) {
+        const gathered = unit.targetResource.gather(1);
         if (gathered > 0) {
-          unit.addResource(resource.resourceType, gathered);
+          unit.addResource(unit.targetResource.resourceType, gathered);
         }
+      } else {
+        unit.targetResource = null;
+        unit.setTask('idle');
       }
     }
     return;
   }
 
-  const resource = findNearestResource(unit, resourceNodes);
+  const resource = findNearestUnclaimedResource(unit, resourceNodes);
   if (!resource) {
     unit.setTask('idle');
     return;
+  }
+
+  if (unit.targetResource !== resource) {
+    if (unit.targetResource) {
+      releaseResource(unit);
+    }
+    if (!claimResource(unit, resource)) {
+      unit.setTask('idle');
+      return;
+    }
   }
 
   unit.setTask('moving_to_resource');

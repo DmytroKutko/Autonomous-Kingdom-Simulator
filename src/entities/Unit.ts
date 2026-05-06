@@ -1,5 +1,6 @@
 import { Vec2, Task, Temperament, CombatStyle, ResourceType } from '../types/common';
 import { LivingEntity } from './LivingEntity';
+import { ResourceNode } from './ResourceNode';
 
 const UNIT_NAMES = ['Aldric', 'Rowan', 'Cedric', 'Torin', 'Bren', 'Ewan', 'Lucan', 'Doran'];
 const usedNames = new Set<string>();
@@ -32,6 +33,7 @@ export class Unit extends LivingEntity {
   gatherTimer: number = 0;
   healingTimer: number = 0;
   isHealingAtBase: boolean = false;
+  targetResource: ResourceNode | null = null;
 
   constructor(
     position: Vec2,
