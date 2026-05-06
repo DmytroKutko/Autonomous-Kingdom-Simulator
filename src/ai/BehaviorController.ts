@@ -53,15 +53,18 @@ const handleHealing = (unit: Unit, base: Base, dt: number): boolean => {
   if (unit.hpPercent >= 1) {
     unit.isHealingAtBase = false;
     unit.healingTimer = 0;
+    unit.targetEntity = null;
     return false;
   }
 
   if (!canReach(unit, base.center, 60)) {
+    unit.targetEntity = base;
     moveToward(unit, base.center, dt);
     unit.setTask('returning');
     return true;
   }
 
+  unit.targetEntity = null;
   unit.healingTimer += dt;
   unit.setTask('healing');
 
@@ -90,6 +93,7 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
   if (shouldEmergencyRetreat(unit) && !unit.isHealingAtBase) {
     unit.isHealingAtBase = true;
     unit.setTask('returning');
+    unit.targetEntity = base;
   }
 
   if (unit.isHealingAtBase) {
@@ -98,10 +102,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
     }
   }
 
-  if (unit.targetEntity) {
-    const targetAsLiving = unit.targetEntity as unknown as { isDead(): boolean };
-    if (!targetAsLiving.isDead()) {
-      const enemy = unit.targetEntity as Enemy;
+  if (unit.targetEntity && unit.targetEntity instanceof Enemy) {
+    const enemy = unit.targetEntity;
+    if (!enemy.isDead()) {
       if (unit.isInRange(enemy) || enemy.isInRange(unit)) {
         unit.setTask('fighting');
         unit.performAttack(enemy);
@@ -114,8 +117,8 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
         moveToward(unit, enemy.center, dt);
         return;
       }
-      unit.targetEntity = null;
     }
+    unit.targetEntity = null;
   }
 
   const enemy = findNearestEnemy(unit, ctx.enemies || []);
@@ -130,6 +133,7 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
         unit.targetEntity = null;
       }
     } else {
+      unit.targetEntity = enemy;
       moveToward(unit, enemy.center, dt);
     }
     return;
@@ -137,7 +141,9 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
 
   if (unit.isInventoryFull()) {
     unit.setTask('returning');
+    unit.targetEntity = base;
     if (canReach(unit, base.center, 50)) {
+      unit.targetEntity = null;
       if (depositResources(unit, base)) {
         if (shouldSoftHeal(unit)) {
           unit.isHealingAtBase = true;
@@ -162,9 +168,11 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
       if (world) {
         world.removeDroppedItem(droppedFood);
       }
+      unit.targetEntity = null;
       unit.setTask('idle');
       return;
     } else {
+      unit.targetEntity = droppedFood;
       unit.setTask('moving_to_target');
       moveToward(unit, droppedFood.center, dt);
       return;
@@ -195,10 +203,12 @@ export const updateUnitBehavior = (ctx: BehaviorContext, dt: number): void => {
   unit.setTask('moving_to_resource');
   const dist = unit.distanceTo(resource);
   if (dist > unit.attackRange + 10) {
+    unit.targetEntity = resource;
     moveToward(unit, resource.center, dt);
     return;
   }
 
+  unit.targetEntity = null;
   unit.setTask('gathering');
   unit.gatherTimer = 1;
 };
