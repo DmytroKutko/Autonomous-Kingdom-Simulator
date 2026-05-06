@@ -65,19 +65,24 @@ export class RightPanel {
     const food = base.getResource('food');
     const currentTotal = wood + food;
 
-    if (currentTotal === this.cachedResourceCount) {
+    if (currentTotal === this.cachedResourceCount && this.resourcesContainer.innerHTML !== '') {
       return;
     }
     this.cachedResourceCount = currentTotal;
 
     let html = `
       <h3>Resources</h3>
-      <div class="resource-row">
-        <span class="resource-label">Wood:</span>
-        <span class="resource-value">${wood}</span>
-      </div>
     `;
-    
+
+    if (wood > 0) {
+      html += `
+        <div class="resource-row">
+          <span class="resource-label">Wood:</span>
+          <span class="resource-value">${wood}</span>
+        </div>
+      `;
+    }
+
     if (food > 0) {
       html += `
         <div class="resource-row">
@@ -85,6 +90,10 @@ export class RightPanel {
           <span class="resource-value">${food}</span>
         </div>
       `;
+    }
+
+    if (currentTotal === 0) {
+      html += `<p class="empty-resources">Empty</p>`;
     }
 
     this.resourcesContainer.innerHTML = html;
