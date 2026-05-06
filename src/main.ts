@@ -1,5 +1,5 @@
 import { Game } from './game/Game';
-import { DebugPanel } from './ui/DebugPanel';
+import { RightPanel } from './ui/RightPanel';
 import { BottomPanel } from './ui/BottomPanel';
 
 console.log('MAIN LOADED', Date.now());
@@ -21,8 +21,8 @@ resize();
 const game = new Game(canvas);
 game.init();
 
-const debugPanel = new DebugPanel(game);
-debugPanel.update();
+const rightPanel = new RightPanel(game);
+rightPanel.render();
 
 const bottomPanel = new BottomPanel(game);
 bottomPanel.update();
@@ -31,12 +31,6 @@ const keys: Set<string> = new Set();
 
 window.addEventListener('keydown', (e) => {
   keys.add(e.key.toLowerCase());
-  if (e.key === '+' || e.key === '=') {
-    game.camera.zoomIn();
-  }
-  if (e.key === '-') {
-    game.camera.zoomOut();
-  }
 });
 
 window.addEventListener('keyup', (e) => {
@@ -44,11 +38,6 @@ window.addEventListener('keyup', (e) => {
 });
 
 window.addEventListener('wheel', (e) => {
-  if (e.deltaY < 0) {
-    game.camera.zoomIn();
-  } else {
-    game.camera.zoomOut();
-  }
   e.preventDefault();
 }, { passive: false });
 
@@ -71,7 +60,6 @@ function gameLoop(time: number): void {
   handleInput();
   game.update(time);
   game.render();
-  debugPanel.update();
   bottomPanel.update();
   requestAnimationFrame(gameLoop);
 }

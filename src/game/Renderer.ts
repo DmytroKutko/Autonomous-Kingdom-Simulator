@@ -26,6 +26,7 @@ export class Renderer {
     this.renderDroppedItems(world.droppedItems, camera);
     this.renderUnits(world.units, camera);
     this.renderEnemies(world.enemies, camera);
+    this.renderTargetLines(world.units, camera);
   }
 
   renderGrid(camera: Camera): void {
@@ -138,6 +139,24 @@ export class Renderer {
       this.ctx.beginPath();
       this.ctx.arc(screenPos.x + 7, screenPos.y + 7, radius, 0, Math.PI * 2);
       this.ctx.fill();
+    }
+  }
+
+  renderTargetLines(units: Unit[], camera: Camera): void {
+    for (const unit of units) {
+      if (!unit.targetEntity) continue;
+      
+      const unitScreenPos = camera.worldToScreen(unit.position);
+      const targetScreenPos = camera.worldToScreen(unit.targetEntity.position);
+      
+      this.ctx.strokeStyle = '#ffffff';
+      this.ctx.lineWidth = 2;
+      this.ctx.setLineDash([5, 5]);
+      this.ctx.beginPath();
+      this.ctx.moveTo(unitScreenPos.x + 10, unitScreenPos.y + 10);
+      this.ctx.lineTo(targetScreenPos.x + unit.targetEntity.width / 2 * camera.zoom, targetScreenPos.y + unit.targetEntity.height / 2 * camera.zoom);
+      this.ctx.stroke();
+      this.ctx.setLineDash([]);
     }
   }
 

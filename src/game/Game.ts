@@ -14,6 +14,8 @@ export class Game {
   simulation: Simulation;
   selectedUnit: Unit | null = null;
   running: boolean = false;
+  private onResourceChangeCallbacks: (() => void)[] = [];
+  private onUnitChangeCallbacks: (() => void)[] = [];
 
   constructor(canvas: HTMLCanvasElement) {
     console.log('GAME CONSTRUCTOR', Date.now());
@@ -27,8 +29,32 @@ export class Game {
   init(): void {
     this.createInitialObjects();
     this.camera.centerOn(this.world.base.position.x, this.world.base.position.y);
+    this.simulation.setCallbacks(
+      () => this.notifyResourceChange(),
+      () => this.notifyUnitChange()
+    );
     this.running = true;
     console.log('Game initialized');
+  }
+
+  onResourceChange(callback: () => void): void {
+    this.onResourceChangeCallbacks.push(callback);
+  }
+
+  onUnitChange(callback: () => void): void {
+    this.onUnitChangeCallbacks.push(callback);
+  }
+
+  private notifyResourceChange(): void {
+    for (const callback of this.onResourceChangeCallbacks) {
+      callback();
+    }
+  }
+
+  private notifyUnitChange(): void {
+    for (const callback of this.onUnitChangeCallbacks) {
+      callback();
+    }
   }
 
   createInitialObjects(): void {
@@ -51,7 +77,7 @@ export class Game {
     );
     this.world.addUnit(warrior);
 
-    const treeCount = 80;
+    const treeCount = 240;
     for (let i = 0; i < treeCount; i++) {
       const dist = 100 + Math.random() * 7000;
       const angle = Math.random() * Math.PI * 2;
@@ -146,6 +172,8 @@ export class Game {
         config.combatStyle
       );
       this.world.addUnit(warrior);
+      this.notifyResourceChange();
+      this.notifyUnitChange();
       return true;
     }
     return false;

@@ -30,4 +30,12 @@ export class Base extends Entity {
     this.resources.set('food', this.getResource('food') - food);
     return true;
   }
+
+  getTotalResources(): number {
+    let total = 0;
+    this.resources.forEach(amount => {
+      total += amount;
+    });
+    return total;
+  }
 }

@@ -8,9 +8,35 @@ export class Simulation {
   lastTime: number = -1;
   accumulator: number = 0;
   fixedDt: number = 1 / 60;
+  private prevResourceCount: number = 0;
+  private prevUnitCount: number = 0;
+  private onResourceChange: (() => void) | null = null;
+  private onUnitChange: (() => void) | null = null;
 
   constructor(world: World) {
     this.world = world;
+    this.prevResourceCount = world.base.getTotalResources();
+    this.prevUnitCount = world.units.length;
+  }
+
+  setCallbacks(onResourceChange: (() => void) | null, onUnitChange: (() => void) | null): void {
+    this.onResourceChange = onResourceChange;
+    this.onUnitChange = onUnitChange;
+  }
+
+  private checkAndNotifyChanges(): void {
+    const currentResourceCount = this.world.base.getTotalResources();
+    const currentUnitCount = this.world.units.length;
+
+    if (currentResourceCount !== this.prevResourceCount && this.onResourceChange) {
+      this.prevResourceCount = currentResourceCount;
+      this.onResourceChange();
+    }
+
+    if (currentUnitCount !== this.prevUnitCount && this.onUnitChange) {
+      this.prevUnitCount = currentUnitCount;
+      this.onUnitChange();
+    }
   }
 
   private handleEnemyDeath(enemy: Enemy): void {
@@ -73,5 +99,7 @@ export class Simulation {
 
     this.world.removeDeadEnemies();
     this.world.respawnResources();
+    
+    this.checkAndNotifyChanges();
   }
 }

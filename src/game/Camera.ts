@@ -5,7 +5,7 @@ export class Camera {
   y: number = 0;
   width: number;
   height: number;
-  zoom: number = 1;
+  zoom: number = 0.5;
   speed: number = 5;
   minZoom: number = 0.5;
   maxZoom: number = 2.0;

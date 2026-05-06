@@ -21,12 +21,12 @@ body {
   background: #0f0f1a;
 }
 
-#debug-panel {
+#right-panel {
   position: fixed;
   right: 0;
   top: 0;
   width: 280px;
-  height: 100%;
+  height: calc(100% - 140px);
   background: #16213e;
   padding: 16px;
   border-left: 2px solid #0f3460;
@@ -37,7 +37,7 @@ body {
   align-items: flex-start;
 }
 
-#debug-panel h2 {
+#right-panel h2 {
   font-size: 16px;
   margin-bottom: 12px;
   color: #e94560;
@@ -45,7 +45,7 @@ body {
   display: block;
 }
 
-#debug-panel h3 {
+#right-panel h3 {
   font-size: 12px;
   margin: 12px 0 6px;
   color: #533a71;
@@ -53,7 +53,8 @@ body {
   display: block;
 }
 
-#debug-panel .row {
+#right-panel .resource-row,
+#right-panel .stat-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -62,65 +63,57 @@ body {
   margin: 4px 0;
 }
 
-#debug-panel .row .label {
+#right-panel .resource-label,
+#right-panel .stat-label {
   color: #888;
   white-space: nowrap;
 }
 
-#debug-panel .row .value {
+#right-panel .resource-value,
+#right-panel .stat-value {
   color: #fff;
   white-space: nowrap;
   text-align: right;
   margin-left: auto;
 }
 
-#base-resources,
-#selected-unit {
+#kingdom-resources,
+#selected-unit-details {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-#debug-panel .unit-item {
+#right-panel .unit-item {
   padding: 4px 8px;
   margin: 2px 0;
   background: #0f3460;
   cursor: pointer;
   font-size: 11px;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
 }
 
-#debug-panel .unit-item:hover {
+#right-panel .unit-item:hover {
   background: #1a4a7a;
 }
 
-#debug-panel .unit-item.selected {
+#right-panel .unit-item.selected {
   background: #e94560;
 }
 
-#debug-panel button {
-  width: 100%;
-  padding: 8px;
-  margin: 8px 0;
-  background: #e94560;
+#right-panel .unit-name-display {
   color: #fff;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-  box-sizing: border-box;
 }
 
-#debug-panel button:hover {
-  background: #ff6b6b;
+#right-panel .unit-personal-name {
+  color: #aaa;
+  font-style: italic;
 }
 
-#debug-panel button:disabled {
-  background: #444;
-  cursor: not-allowed;
-}
-
-#debug-panel .hp-bar-container {
+#right-panel .hp-bar-container {
   width: 100%;
   height: 8px;
   background: #333;
@@ -128,24 +121,24 @@ body {
   box-sizing: border-box;
 }
 
-#debug-panel .hp-bar {
+#right-panel .hp-bar {
   height: 100%;
   transition: width 0.2s;
 }
 
-#debug-panel .hp-bar.healthy {
+#right-panel .hp-bar.healthy {
   background: #4caf50;
 }
 
-#debug-panel .hp-bar.medium {
+#right-panel .hp-bar.medium {
   background: #ff9800;
 }
 
-#debug-panel .hp-bar.low {
+#right-panel .hp-bar.low {
   background: #f44336;
 }
 
-#debug-panel .inventory-item {
+#right-panel .inventory-item {
   font-size: 10px;
   color: #aaa;
   padding-left: 8px;
@@ -153,29 +146,26 @@ body {
   box-sizing: border-box;
 }
 
-#debug-panel .hp-bar-container {
+#right-panel .inventory-item.empty {
+  font-style: italic;
+}
+
+#right-panel .unit-detail-header {
+  font-size: 13px;
+  font-weight: bold;
+  color: #e94560;
+  margin: 8px 0 4px;
   width: 100%;
-  height: 8px;
-  background: #333;
-  margin: 4px 0;
-  box-sizing: border-box;
 }
 
-#debug-panel .hp-bar {
-  height: 100%;
-  transition: width 0.2s;
+#right-panel .no-units {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
 }
 
-#debug-panel .hp-bar.healthy {
-  background: #4caf50;
-}
-
-#debug-panel .hp-bar.medium {
-  background: #ff9800;
-}
-
-#debug-panel .hp-bar.low {
-  background: #f44336;
+#units-list-section {
+  width: 100%;
 }
 
 #bottom-panel {
